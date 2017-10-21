@@ -37,7 +37,6 @@ func recursivePrint2(data interface{}, n int, tail string) {
 		case string:
 			fmt.Printf(`"%v"`, Magenta(data.(string)))
 		case map[string] interface{}:
-			recursivePrintWhiteSpace(n)
 			fmt.Println("{")
 			dataArr := data.(map[string] interface{})
 			for k2, v2 := range dataArr {
@@ -45,8 +44,7 @@ func recursivePrint2(data interface{}, n int, tail string) {
 				fmt.Printf(`"%v":`, Green(k2))
 				recursivePrint2(v2, n + 1, ",\n")
 			}
-			recursivePrintWhiteSpace(n + 1)
-			fmt.Print("}")
+			fmt.Print(w(n) + "}")
 		case [] interface{}:
 			fmt.Println("[")
 			dataArr := data.([]interface{})
@@ -54,8 +52,7 @@ func recursivePrint2(data interface{}, n int, tail string) {
 				recursivePrintWhiteSpace(n + 1)
 				recursivePrint2(v2, n + 1, ",\n")
 			}
-			recursivePrintWhiteSpace(n)
-			fmt.Print("]")
+			fmt.Print(w(n) + "]")
 	}
 	fmt.Print(tail)
 }
@@ -65,6 +62,13 @@ func recursivePrintWhiteSpace(n int) {
 	}
 }
 
+func w(n int) string{
+	var a string = ""
+	for i := 0; i<n; i++ {
+		a += "  "
+	}
+	return a
+}
 
 
 
