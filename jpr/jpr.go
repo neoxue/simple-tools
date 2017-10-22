@@ -20,7 +20,10 @@ func main() {
 	if scanner.Scan() {
 		line := scanner.Text()
 		var jsonObject interface{}
-		json.Unmarshal([]byte(line), &jsonObject)
+		err := json.Unmarshal([]byte(line), &jsonObject)
+		if err != nil {
+			fmt.Println(err)
+		}
 		recursivePrint2(jsonObject, 0, "\n")
 	}
 }
