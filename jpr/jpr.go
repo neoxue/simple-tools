@@ -22,7 +22,8 @@ func main() {
 		var jsonObject interface{}
 		err := json.Unmarshal([]byte(line), &jsonObject)
 		if err != nil {
-			fmt.Println(err)
+			fmt.Sprintln("%+v", err)
+			return;
 		}
 		recursivePrint2(jsonObject, 0, "\n")
 	}
