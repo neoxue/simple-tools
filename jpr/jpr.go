@@ -31,11 +31,11 @@ func recursivePrint2(data interface{}, n int, tail string) {
 			jsonStr, _ :=json.MarshalIndent(data, "", "  ")
 			fmt.Printf(`"%v"`, Red(string(jsonStr)))
 		case bool:
-			fmt.Printf(`"%v"`, Brown(data))
+			fmt.Printf(`%v`, Brown(data))
 		case float64:
-			fmt.Printf(`"%v"`, Gray(data))
+			fmt.Printf(`%v`, Gray(data))
 		case int:
-			fmt.Printf(`"%v"`, Gray(data))
+			fmt.Printf(`%v`, Gray(data))
 		case string:
 			fmt.Printf(`"%v"`, Magenta(data.(string)))
 		case map[string] interface{}:
