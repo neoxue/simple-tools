@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 
 	rotatelogs "github.com/lestrrat/go-file-rotatelogs"
@@ -24,6 +25,7 @@ var (
 	// key均为绝对路径
 	logtailinfos        = map[string]*logtailinfo_t{}
 	logtailtoremoteinfo = logtailtoremoteinfo_t{}
+	mu                  sync.RWMutex
 )
 
 type logtailtoremoteinfo_t struct {
@@ -82,6 +84,8 @@ func computetopic(path string) string {
 	return "logtail_default"
 }
 func taillog(path string, info os.FileInfo, err error) error {
+	mu.RLock()
+	defer mu.RUnlock()
 	topic := computetopic(path)
 	if err != nil {
 		logrus.Error(err)
@@ -115,8 +119,10 @@ func taillog(path string, info os.FileInfo, err error) error {
 	return nil
 }
 func dotaillog(path string, info os.FileInfo) {
+	mu.RLock()
 	ptr := logtailinfos[path].Cursor
-
+	topic := logtailinfos[path].Topic
+	mu.RUnlock()
 	// truely tail file
 	f, err := os.Open(path)
 	if err != nil {
@@ -127,6 +133,7 @@ func dotaillog(path string, info os.FileInfo) {
 		logrus.Error(err)
 	}
 	// Start reading from the file with a reader.
+	lastTime := time.Now()
 	reader := bufio.NewReader(f)
 	for true {
 		var line string
@@ -135,17 +142,20 @@ func dotaillog(path string, info os.FileInfo) {
 			if err != nil {
 				break
 			}
-			toremote(line, logtailinfos[path].Topic)
+			toremote(line, topic)
 			cursor, _ := f.Seek(0, io.SeekCurrent)
+			mu.RLock()
+			lastTime = time.Now()
+			logtailinfos[path].Logtime = lastTime
 			logtailinfos[path].Cursor = cursor
-			logtailinfos[path].Logtime = time.Now()
+			mu.RUnlock()
 		}
 		if err != io.EOF {
 			logrus.Error(err)
 		}
 		time.Sleep(3 * time.Second)
 		// 距离上一次读取30s以上, 则不再读取
-		if err == nil && time.Now().Sub(logtailinfos[path].Logtime).Seconds() > 60 {
+		if err == nil && time.Now().Sub(lastTime).Seconds() > 60 {
 			return
 		}
 	}
@@ -205,6 +215,8 @@ func fetchremoteinfo() (err error) {
 }
 
 func loglogtailinfos() {
+	mu.RLock()
+	defer mu.RUnlock()
 	// 删除过期文件信息
 	for k, v := range logtailinfos {
 		if time.Now().Sub(v.Logtime).Seconds() > 2*86400 {
