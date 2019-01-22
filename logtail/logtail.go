@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -44,12 +45,15 @@ func main() {
 
 func monitorlogs() {
 	if logtaildir == "" {
+		fmt.Println("no logtaildir found")
 		logrus.Fatal("no logtaildir found")
 	}
 	if fileinfo, err := os.Stat(logtaildir); err != nil {
+		fmt.Println(err)
 		logrus.Fatal(err)
 	} else {
 		if !fileinfo.IsDir() {
+			fmt.Println("logtaildir:" + logtaildir + "is not a dir")
 			logrus.Fatal("logtaildir:" + logtaildir + " is not a dir")
 		}
 	}
@@ -167,6 +171,7 @@ func initConfigs() {
 		logrus.Error(err)
 	}
 	if err := fetchremoteinfo(); err != nil {
+		fmt.Println(err)
 		logrus.Fatal(err)
 	}
 }
@@ -208,10 +213,12 @@ func loglogtailinfos() {
 	}
 	logtailinfos_bts, err := json.Marshal(logtailinfos)
 	if err != nil {
+		fmt.Println(err)
 		logrus.Fatal(err)
 	}
 	err = ioutil.WriteFile(logtailinfofile, logtailinfos_bts, 0777)
 	if err != nil {
+		fmt.Println(err)
 		logrus.Fatal(err)
 	}
 }
@@ -228,6 +235,7 @@ func newproducer(bootstrapservers string) {
 	defaultTopic := "logtail_default"
 	_, err = producer.GetMetadata(&defaultTopic, true, 1000)
 	if err != nil {
+		fmt.Println(err)
 		logrus.Fatal(err)
 	}
 	// Delivery report handler for produced messages
