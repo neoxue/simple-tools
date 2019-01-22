@@ -84,8 +84,8 @@ func computetopic(path string) string {
 	return "logtail_default"
 }
 func taillog(path string, info os.FileInfo, err error) error {
-	mu.RLock()
-	defer mu.RUnlock()
+	mu.Lock()
+	defer mu.Unlock()
 	topic := computetopic(path)
 	if err != nil {
 		logrus.Error(err)
@@ -119,10 +119,10 @@ func taillog(path string, info os.FileInfo, err error) error {
 	return nil
 }
 func dotaillog(path string, info os.FileInfo) {
-	mu.RLock()
+	mu.Lock()
 	ptr := logtailinfos[path].Cursor
 	topic := logtailinfos[path].Topic
-	mu.RUnlock()
+	mu.Unlock()
 	// truely tail file
 	f, err := os.Open(path)
 	if err != nil {
@@ -144,11 +144,11 @@ func dotaillog(path string, info os.FileInfo) {
 			}
 			toremote(line, topic)
 			cursor, _ := f.Seek(0, io.SeekCurrent)
-			mu.RLock()
+			mu.Lock()
 			lastTime = time.Now()
 			logtailinfos[path].Logtime = lastTime
 			logtailinfos[path].Cursor = cursor
-			mu.RUnlock()
+			mu.Unlock()
 		}
 		if err != io.EOF {
 			logrus.Error(err)
@@ -215,8 +215,8 @@ func fetchremoteinfo() (err error) {
 }
 
 func loglogtailinfos() {
-	mu.RLock()
-	defer mu.RUnlock()
+	mu.Lock()
+	defer mu.Unlock()
 	// 删除过期文件信息
 	for k, v := range logtailinfos {
 		if time.Now().Sub(v.Logtime).Seconds() > 2*86400 {
