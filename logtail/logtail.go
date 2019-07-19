@@ -7,14 +7,14 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/Shopify/sarama"
 	rotatelogs "github.com/lestrrat/go-file-rotatelogs"
-
-	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/sirupsen/logrus"
 )
 
@@ -40,6 +40,7 @@ func main() {
 	logrus.SetOutput(rl)
 	logrus.SetLevel(logrus.InfoLevel)
 	logrus.SetFormatter(&logrus.JSONFormatter{})
+	logrus.Info("(re)start taillog master")
 	initConfigs()
 	newproducer(logtailtoremoteinfo.Bootstrapservers)
 	monitorlogs()
@@ -115,7 +116,7 @@ func taillog(path string, info os.FileInfo, err error) error {
 		logtailinfos[path] = &logtailinfo_t{File: path, Logtime: time.Now(), Cursor: 0, Topic: topic}
 	}
 	go dotaillog(path, info)
-	logrus.Info("(restart) dotaillog:" + path)
+	logrus.Info("(re)start dotaillog:" + path)
 	return nil
 }
 func dotaillog(path string, info os.FileInfo) {
@@ -127,7 +128,9 @@ func dotaillog(path string, info os.FileInfo) {
 	f, err := os.Open(path)
 	if err != nil {
 		logrus.Error(err)
+		return
 	}
+	defer f.Close()
 	_, err = f.Seek(ptr, io.SeekStart)
 	if err != nil {
 		logrus.Error(err)
@@ -235,40 +238,48 @@ func loglogtailinfos() {
 	}
 }
 
-var producer *kafka.Producer
+//var producer *kafka.Producer
+var producer sarama.AsyncProducer
 
 func newproducer(bootstrapservers string) {
-	logrus.Info("kafka bootstrapservers:" + bootstrapservers)
 	var err error
-	producer, err = kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": bootstrapservers})
+	logrus.Info("kafka bootstrapservers:" + bootstrapservers)
+
+	config := sarama.NewConfig()
+	config.Producer.Return.Successes = true
+	bootstrapserverarr := strings.Split(bootstrapservers, ",")
+	producer, err = sarama.NewAsyncProducer(bootstrapserverarr, config)
 	if err != nil {
-		panic(err)
-	}
-	defaultTopic := "logtail_default"
-	_, err = producer.GetMetadata(&defaultTopic, true, 1000)
-	if err != nil {
-		fmt.Println(err)
 		logrus.Fatal(err)
 	}
-	// Delivery report handler for produced messages
+	// Trap SIGINT to trigger a graceful shutdown.
+	signals := make(chan os.Signal, 1)
+	signal.Notify(signals, os.Interrupt)
+
+	var (
+		wg sync.WaitGroup
+	)
+	wg.Add(1)
 	go func() {
-		for e := range producer.Events() {
-			switch ev := e.(type) {
-			case *kafka.Message:
-				if ev.TopicPartition.Error != nil {
-					logrus.Error("Delivery failed: %v\n", ev.TopicPartition)
-				}
-				//fmt.Printf("Delivered message to %v\n", ev.TopicPartition)
-			}
+		defer wg.Done()
+		for range producer.Successes() {
+		}
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for err := range producer.Errors() {
+			logrus.Error(err)
 		}
 	}()
 }
 
 func toKafka(str string, topic string) {
-	producer.Produce(&kafka.Message{
-		TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
-		Value:          []byte(str),
-	}, nil)
-	// Wait for message deliveries before shutting down
-	//p.Flush(15 * 1000)
+	//topic = "logtail_test"
+	message := &sarama.ProducerMessage{Topic: topic, Value: sarama.StringEncoder(str)}
+	//fmt.Println("int logging"+time.Now().Format(time.RFC3339), str)
+	select {
+	case producer.Input() <- message:
+	}
 }
