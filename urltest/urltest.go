@@ -1,17 +1,16 @@
-
 package main
 
 import (
 	"bufio"
+	"github.com/lestrrat/go-file-rotatelogs"
+	"github.com/neoxue/goutils/rerrors"
+	"github.com/sirupsen/logrus"
 	"io"
+	"io/ioutil"
+	"net/http"
+	"net/url"
 	"os"
 	"strings"
-	"net/url"
-	"net/http"
-	"github.com/neoxue/rerrors"
-	"github.com/sirupsen/logrus"
-	"io/ioutil"
-	"github.com/lestrrat/go-file-rotatelogs"
 	"time"
 )
 
@@ -39,14 +38,14 @@ func ReadLine(fileName string, handler func(string)) error {
 // if your os could only maintain 65536 (out) connections the same time (65535 ports..)
 // it's probabely neccessary to limit your requests;-(
 var ch = make(chan string, 1000)
+
 func readChan() {
 	for true {
 		time.Sleep(1 * time.Millisecond)
-		line := <- ch
+		line := <-ch
 		go fuckkv(line)
 	}
 }
-
 
 var client = &http.Client{}
 
@@ -75,4 +74,3 @@ func main() {
 	logrus.SetLevel(logrus.DebugLevel)
 	ReadLine("pure_urls.txt", fuckkv)
 }
-
