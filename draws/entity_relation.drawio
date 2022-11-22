@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2022-11-22T07:15:22.436Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4866.0 Safari/537.36" etag="OTtig2xWMyD2e0vpNMVn" version="20.5.3" type="github">
+<mxfile host="app.diagrams.net" modified="2022-11-22T07:16:16.126Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4866.0 Safari/537.36" etag="gidDVlND_5C__mvKLmkJ" version="20.5.3" type="github">
   <diagram id="R2lEEEUBdFMjLlhIrx00" name="Page-1">
     <mxGraphModel dx="946" dy="504" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0" extFonts="Permanent Marker^https://fonts.googleapis.com/css?family=Permanent+Marker">
       <root>
@@ -52,7 +52,7 @@
         <mxCell id="uw1oQP8bwmENWxyOQQU2-24" value="kafka" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="470" y="360" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="uw1oQP8bwmENWxyOQQU2-26" value="pc 各频道/wap各业务" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="uw1oQP8bwmENWxyOQQU2-26" value="pc，wap各业务与频道" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="710" y="110" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="uw1oQP8bwmENWxyOQQU2-28" value="推荐部门" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
