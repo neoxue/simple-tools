@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2022-11-22T07:13:57.565Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4866.0 Safari/537.36" etag="ArpTkxYfn43iIVZC2qAJ" version="20.5.3" type="github">
+<mxfile host="app.diagrams.net" modified="2022-11-22T07:15:22.436Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4866.0 Safari/537.36" etag="OTtig2xWMyD2e0vpNMVn" version="20.5.3" type="github">
   <diagram id="R2lEEEUBdFMjLlhIrx00" name="Page-1">
     <mxGraphModel dx="946" dy="504" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0" extFonts="Permanent Marker^https://fonts.googleapis.com/css?family=Permanent+Marker">
       <root>
@@ -13,7 +13,7 @@
         <mxCell id="uw1oQP8bwmENWxyOQQU2-4" value="registered scripts/apis" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="470" y="460" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="uw1oQP8bwmENWxyOQQU2-7" value="文档服务document-service&lt;br&gt;文档与文档模型，流程编排（内部称为切面）" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="uw1oQP8bwmENWxyOQQU2-7" value="文档服务document-service&lt;br&gt;文档与文档模型，流程编排（内部称为切面，利用文档模型配置+rabbitmq）" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="80" y="340" width="260" height="120" as="geometry" />
         </mxCell>
         <mxCell id="uw1oQP8bwmENWxyOQQU2-9" value="mongo" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
@@ -158,6 +158,9 @@
             <mxPoint x="240" y="240" as="sourcePoint" />
             <mxPoint x="520" y="270" as="targetPoint" />
           </mxGeometry>
+        </mxCell>
+        <mxCell id="uw1oQP8bwmENWxyOQQU2-57" value="milvus" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="650" y="540" width="120" height="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
