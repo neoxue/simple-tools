@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/neoxue/simhash"
+	"simple-tools/simhash"
 )
 
 func main() {

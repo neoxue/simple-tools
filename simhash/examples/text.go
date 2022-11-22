@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/neoxue/simhash"
+	"simple-tools/simhash"
 )
 
 // this is a test for 3 texts and some words, and for shingled/weighted methods;

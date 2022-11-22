@@ -31,7 +31,6 @@ func ReadLine(fileName string, handler func(string)) error {
 			return err
 		}
 	}
-	return nil
 }
 
 // the reason add channel and sleep is
@@ -52,7 +51,7 @@ var client = &http.Client{}
 func fuckkv(line string) {
 	urlpath := "http://10.41.11.119:20001/comos_urls/" + url.QueryEscape(line)
 	if req, err := http.NewRequest("GET", urlpath, strings.NewReader("")); err != nil {
-		err = rerrors.WrapErrors(err, "new request failed", rerrors.ErrorTypeRuntime, "x302")
+		err = rerrors.WrapErrors(err, "new request failed", "x302")
 		logrus.WithFields(logrus.Fields{"actionstr": "empty"}).Error(err)
 	} else {
 		resp, err := client.Do(req)
